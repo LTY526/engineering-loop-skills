@@ -26,8 +26,9 @@ available to the next session.
 1. **Learn the developer's context once.** Use what the user already said. Otherwise, ask how
    familiar they are with this project's language/platform and which languages or frameworks
    they prefer for architectural analogies. If they want this remembered, save those facts and
-   explanation preferences in the local personal file `$CODEX_HOME/developer-context.md` (or
-   `~/.codex/developer-context.md` when `CODEX_HOME` is unset); read it on later planning runs.
+   explanation preferences in the personal developer context file: in Codex,
+   `$CODEX_HOME/developer-context.md` (default `~/.codex/developer-context.md`); in Claude
+   Code, `~/.claude/developer-context.md`. Read it on later planning runs.
    An absent profile or unanswered question does not stop planning. The profile changes how
    findings are explained, never the technical standard used to review the plan.
 
@@ -37,10 +38,17 @@ available to the next session.
    it as a requirement. Draft both files from that evidence. Write them to disk but do **not**
    commit yet.
 
-3. **Independent review.** Dispatch a fresh sub-agent (`Agent` tool, no `fork` — it must
-   NOT inherit this conversation). Give it the user's feature goal and constraints, with
-   tentative implementation ideas marked as tentative, plus the two file paths. Do not supply
-   the drafter's preferred verdict. Tell it to read the files and relevant code itself:
+   If the user brings an exploration branch or handoff, read its note and prototype diff.
+   Carry confirmed user decisions into the ADR/spec; mark unresolved ideas as open. Check
+   technical claims against the current code. The prototype is evidence, not automatically
+   the chosen architecture. Add the branch and commit to the spec when its code may be reused.
+
+3. **Independent review.** Dispatch a fresh subagent with isolated context (Claude Code:
+   non-fork `Agent`; Codex: `spawn_agent` with `fork_turns="none"`). It must not inherit
+   this conversation. Give it the user's feature goal and constraints, with
+   tentative implementation ideas marked as tentative, plus the two file paths and any
+   exploration handoff/ref. Do not supply the drafter's preferred verdict. Tell it to
+   read the files and relevant code itself:
 
    > Check whether the decision fits the user's goal and the codebase, the spec can be built
    > without inventing behavior, and each acceptance criterion is checkable. Verify any claimed

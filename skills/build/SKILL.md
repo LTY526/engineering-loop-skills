@@ -8,9 +8,9 @@ description: "Build Ready GitHub issues from reviewed specs: check the plan, imp
 Execution only. Never makes a design decision — if an issue is ambiguous, block it and move on;
 that gap gets fixed by the `planning` skill, not by improvising here.
 
-Read the optional personal `$CODEX_HOME/developer-context.md` (or
-`~/.codex/developer-context.md` when unset). Use it only to explain unfamiliar platform
-concepts and QA findings in terms the developer knows. It never changes the spec or pass
+Read the optional personal developer context file: in Codex, `$CODEX_HOME/developer-context.md`
+(default `~/.codex/developer-context.md`); in Claude Code, `~/.claude/developer-context.md`.
+Use it only to explain unfamiliar platform concepts and QA findings in terms the developer knows. It never changes the spec or pass
 criteria; do not ask for proficiency again in build.
 
 ## Steps
@@ -28,7 +28,9 @@ criteria; do not ask for proficiency again in build.
    is not a design gap when the stated behavior has one clear reading. A missing spec, false
    premise, or criterion whose pass/fail still requires a product decision goes back to planning:
    comment with the specific evidence, add `blocked`, remove `ready`, and skip without building.
-   If the fetch fails, stop before any issue or branch mutation.
+   If the fetch fails, stop before any issue or branch mutation. If the spec references an
+   exploration branch, fetch and inspect its handoff and diff. An unavailable prototype is
+   a blocker only when the spec explicitly depends on reusing that code.
 
 3. **Pick it** only after preflight passes:
    ```
@@ -38,7 +40,8 @@ criteria; do not ask for proficiency again in build.
    If the branch already exists, inspect and resume its work rather than creating another one.
    The spec file's acceptance criteria are the contract; the issue body points to them.
 
-4. **Build** — dispatch a fresh Engineer sub-agent (`Agent` tool) with the spec file's contents
+4. **Build** — dispatch a fresh Engineer subagent (Claude Code: non-fork `Agent`; Codex:
+   `spawn_agent` with `fork_turns="none"`) with the spec file's contents
    (not this conversation, not a paraphrase). Instruct it: implement this, test-first — write
    the acceptance test(s) first, confirm they fail, then implement until they pass. Commit the
    test and implementation as work lands. Report the changed files, commits, commands and exit
@@ -46,7 +49,12 @@ criteria; do not ask for proficiency again in build.
    the Engineer report (`git push -u origin task/<n>-<slug>`) so a stopped session can recover
    its landed commits.
 
-5. **Verify independently** — dispatch a second fresh sub-agent as QA, given the spec file's
+   When the spec names exploration code, give the Engineer the branch/ref and handoff as
+   context. Reuse or port only the parts that satisfy the reviewed spec; prototype checks
+   do not replace the acceptance tests.
+
+5. **Verify independently** — dispatch a second fresh subagent as QA with the same isolated
+   context, given the spec file's
    contents plus the branch diff (`git diff origin/main...HEAD`). It must NOT be told the Engineer's
    self-report as fact — it re-derives everything itself:
    - Re-run the automated checks and read their exit codes; don't take "tests pass" on faith.
