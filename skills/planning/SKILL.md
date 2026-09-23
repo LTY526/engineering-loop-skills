@@ -10,7 +10,7 @@ at those files. This skill never touches production code — it produces a revie
 and spec, or an unresolved plan with no issue.
 
 Order is fixed and enforced: **the reviewed files are available on `origin/main` before an issue
-is labeled Ready.** `loop` branches from that ref; a local commit alone does not make its spec
+is labeled Ready.** `build` branches from that ref; a local commit alone does not make its spec
 available to the next session.
 
 ## Files
@@ -80,7 +80,7 @@ available to the next session.
    gh issue create --title "<short specific title>" --label ready --body "<see format below>"
    ```
 
-6. **Never build.** If asked to also implement it, decline — hand off to `loop` instead. This
+6. **Never build.** If asked to also implement it, decline — hand off to `build` instead. This
    skill's only output is two committed files and one issue (or an unresolved plan with no issue).
 
 ## Issue body format

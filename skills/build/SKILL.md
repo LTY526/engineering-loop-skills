@@ -1,9 +1,9 @@
 ---
-name: loop
-description: "Execute a Ready GitHub issue after a narrow pre-build check, build via an Engineer sub-agent, independently verify code and device checks, then PR/merge. Route design gaps back to planning without spending build retries."
+name: build
+description: "Build Ready GitHub issues from reviewed specs: check the plan, implement with an Engineer sub-agent, verify independently, and prepare a PR. Return design gaps to planning."
 ---
 
-# loop
+# build
 
 Execution only. Never makes a design decision — if an issue is ambiguous, block it and move on;
 that gap gets fixed by the `planning` skill, not by improvising here.
@@ -11,7 +11,7 @@ that gap gets fixed by the `planning` skill, not by improvising here.
 Read the optional personal `$CODEX_HOME/developer-context.md` (or
 `~/.codex/developer-context.md` when unset). Use it only to explain unfamiliar platform
 concepts and QA findings in terms the developer knows. It never changes the spec or pass
-criteria; do not ask for proficiency again in loop.
+criteria; do not ask for proficiency again in build.
 
 ## Steps
 
@@ -42,7 +42,7 @@ criteria; do not ask for proficiency again in loop.
    (not this conversation, not a paraphrase). Instruct it: implement this, test-first — write
    the acceptance test(s) first, confirm they fail, then implement until they pass. Commit the
    test and implementation as work lands. Report the changed files, commits, commands and exit
-   codes, including the red-then-green transition. The loop session pushes the task branch after
+   codes, including the red-then-green transition. The build session pushes the task branch after
    the Engineer report (`git push -u origin task/<n>-<slug>`) so a stopped session can recover
    its landed commits.
 
